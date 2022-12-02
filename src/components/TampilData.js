@@ -11,14 +11,14 @@ function TampilData() {
 	const [Id,setId] = useState("");
 	const [Nama,setNama] = useState("");
 	const [Alamat,setAlamat] = useState("");
-	const [Gender,setGender] = useState("");
+	const [Gender,setGender] = useState("L");
 	const [Gaji,setGaji] = useState("");
 
 	const clearData = () => {
 		setId("");
 		setNama("");
 		setAlamat("");
-		setGender("");
+		setGender("L");
 		setGaji("");
 	}
 
@@ -32,19 +32,24 @@ function TampilData() {
 	}
 
 	const addData = () => {
-		let formData = {
-			'id' : Id,
-			'nama' : Nama,
-			'alamat' : Alamat,
-			'gender' : Gender,
-			'gaji' : Gaji
-		};
+		const formData = new URLSearchParams();
+		formData.append('id',Id);
+		formData.append('nama',Nama);
+		formData.append('alamat',Alamat);
+		formData.append('gender',Gender);
+		formData.append('gaji',Gaji);
 		axios
 			.post(url+'tambah_data.php', formData)
 			.then(response => {
 				console.log(response);
+				viewData();
+				clearData();
 		});
 
+	}
+
+	const editData = (data) => {
+		console.log(data);
 	}
 
 	useEffect(() => {
@@ -83,7 +88,7 @@ function TampilData() {
 							<td>{item.gender}</td>
 							<td>{item.gaji}</td>
 							<td>
-								<button className="btn btn-small btn-warning">Edit</button> |
+								<button className="btn btn-small btn-warning" onClick={() => editData(item)}>Edit</button> |
 								<button className="btn btn-small btn-danger">Delete</button>
 							</td>
 						</tr>
