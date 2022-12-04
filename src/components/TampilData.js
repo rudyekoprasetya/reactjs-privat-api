@@ -26,7 +26,7 @@ function TampilData() {
 		axios
 			.get(url+'tampil_data.php')
 			.then(response => {
-				console.log(response.data.pengurus);
+				// console.log(response.data.pengurus);
 				setPengurus(response.data.pengurus);
 		});
 	}
@@ -41,7 +41,8 @@ function TampilData() {
 		axios
 			.post(url+'tambah_data.php', formData)
 			.then(response => {
-				console.log(response);
+				// console.log(response.data.pesan);
+				alert(response.data.pesan);
 				viewData();
 				clearData();
 		});
@@ -49,7 +50,40 @@ function TampilData() {
 	}
 
 	const editData = (data) => {
-		console.log(data);
+		// console.log(data);
+		setId(data.id);
+		setNama(data.nama);
+		setAlamat(data.alamat);
+		setGender(data.gender);
+		setGaji(data.gaji);
+	}
+
+	const updateData = () => {
+		const formData = new URLSearchParams();
+		formData.append('id',Id);
+		formData.append('nama',Nama);
+		formData.append('alamat',Alamat);
+		formData.append('gender',Gender);
+		formData.append('gaji',Gaji);
+		axios
+			.post(url+'ubah_data.php', formData)
+			.then(response => {
+				console.log(response.data.pesan);
+				alert(response.data.pesan);
+				viewData();
+				clearData();
+		});
+	}
+
+	const deleteData = (data) => {
+		// console.log(data);
+		axios
+			.get(url+'hapus_data.php?id='+data)
+			.then(response => {
+				console.log(response.data.pesan);
+				alert(response.data.pesan);
+				viewData();
+		});		
 	}
 
 	useEffect(() => {
@@ -88,8 +122,8 @@ function TampilData() {
 							<td>{item.gender}</td>
 							<td>{item.gaji}</td>
 							<td>
-								<button className="btn btn-small btn-warning" onClick={() => editData(item)}>Edit</button> |
-								<button className="btn btn-small btn-danger">Delete</button>
+								<button className="btn btn-small btn-warning"  data-bs-toggle="modal" data-bs-target="#editModal" onClick={(e) => editData(item)}>Edit</button> |
+								<button className="btn btn-small btn-danger" onClick={(e) => deleteData(item.id)}>Delete</button>
 							</td>
 						</tr>
 					))}
@@ -139,10 +173,51 @@ function TampilData() {
 		     </div>
 		   </div>
 		   {/*modal tambah data*/}
+
+		   {/*modal edit data*/}
+		   <div className="modal fade" id="editModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		     <div className="modal-dialog">
+		       <div className="modal-content">
+		         <div className="modal-header">
+		           <h5 className="modal-title" id="exampleModalLabel">Edit Data</h5>
+		           <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		         </div>
+		         <div className="modal-body">
+		           <form>
+		             <div className="mb-3">
+		               <label className="form-label">ID</label>
+		               <input type="text" className="form-control" readonly="readonly" value={Id} onChange={(e) => setId(e.target.value)} />
+		             </div>
+		             <div className="mb-3">
+		               <label className="form-label">Nama</label>
+		               <input type="text" className="form-control" value={Nama} onChange={(e) => setNama(e.target.value)} />
+		             </div>
+		             <div className="mb-3">
+		               <label className="form-label">Alamat</label>
+		               <textarea className="form-control" rows="3" value={Alamat} onChange={(e) => setAlamat(e.target.value)}></textarea>
+		             </div>
+		             <div className="mb-3">
+		               <label className="form-label">Gender</label>
+		               <select className="form-control" value={Gender} onChange={(e) => setGender(e.target.value)}>
+		                 <option value="L">Laki-laki</option>
+		                 <option value="P">Perempuan</option>
+		               </select>
+		             </div>
+		             <div className="mb-3">
+		               <label className="form-label">Gaji</label>
+		               <input type="text" className="form-control" value={Gaji} onChange={(e) => setGaji(e.target.value)} />
+		             </div>
+		           </form>
+		         </div>
+		         <div className="modal-footer">
+		           <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>          
+		           <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={updateData}>Update</button>
+		         </div>
+		       </div>
+		     </div>
+		   </div>
+		   {/*modal edit data*/}
 		</div>
-		
-	
-   
 
 	);
 }
